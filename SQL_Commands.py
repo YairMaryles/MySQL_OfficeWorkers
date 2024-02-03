@@ -28,15 +28,14 @@ branch_info = [('JERUSALEM', 'YAFFO 27, JERUSALEM, ISRAEL', 12000000),
                ('STOCKHOLM', '5 STORGATAN, STOCKHOLM, SWEDEN', 8000000),
                ('BOULDER', '256 MAIN STREET, BOULDER, COLORADO-USA', 10000000),
                ('HOUSTON', '101 OAK AVENUE, HOUSTON, TEXAS-USA', 7000000)]
+
 ####################### ACTIONS
-act_show_tables = "SHOW TABLES"
 act_insert_workers = f"INSERT INTO {name_table_emp} " \
                      f"(first_name, last_name, salary, age, department, branch_id, email)" \
                      f" VALUES (%s, %s, %s, %s, %s, %s, %s)"
 act_insert_branches = f"INSERT INTO {name_table_branches} " \
                      f"(branch_name, address, budget)" \
                      f" VALUES (%s, %s, %s)"
-act_use = "USE "
 
 
 ####################### SELECTS

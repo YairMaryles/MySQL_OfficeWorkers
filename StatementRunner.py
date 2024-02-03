@@ -5,26 +5,33 @@ from SQL_Commands import *
 from entry_info import *
 
 
-def run_sql():
+# CONNECTS TO LOCAL DATABASE
+def connect():
     entry_string = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
     cnx = create_engine(entry_string)
     mc = cnx.connect()
     return mc
 
-def close_sql(mc):
+
+# DISCONNECTS FROM LOCAL DATABASE
+def disconnect(mc):
     mc.close()
 
+
+# OUTPUTS A GIVEN TABLE
 def create_full_table(name, mc):
     df1 = pd.read_sql_query(f"SELECT * FROM {name}", mc)
     df = pd.DataFrame(df1)
     df.to_excel(f"{name}_full.xlsx", index=False)
 
 
+# RUNS A SPECIFIC STATEMENT GIVEN AND RETURNS A DATABASE
 def run_statement(mc, statement: str) -> pd.DataFrame:
     df = pd.read_sql_query(statement, mc)
     return pd.DataFrame(df)
 
 
+# RUNS AND SAVES STATEMENTS GIVEN INTO A GIVEN FILE
 def output_statements(mc, output_file_name: str, statements: []):
     DFS = [run_statement(mc=mc, statement=st)  for st in statements]
 
@@ -36,9 +43,7 @@ def output_statements(mc, output_file_name: str, statements: []):
 
 
 if __name__ == '__main__':
-    mc = run_sql()
-
+    mc = connect()
     output_statements(mc=mc, output_file_name='output_file.xlsx', statements=select_commands)
-
-    close_sql(mc)
+    disconnect(mc)
 

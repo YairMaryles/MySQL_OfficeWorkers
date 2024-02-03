@@ -7,35 +7,41 @@ import pyarrow
 import pymysql
 from sqlalchemy import create_engine
 
-mydb = mysql.connector.connect(
-    host=host,
-    user= user,
-    password= password,
-    port=port,
-    database=database
-)
 
-####################### CODE
-mycurser = mydb.cursor()
-# CREATE AND FILL EMPLOYEE TABLE
-mycurser.execute(create_employees_table)
-mydb.commit()
-mycurser.executemany(act_insert_workers, create_employees(500))
-mydb.commit()
-# CREATE AND FILL BRANCH TABLE
-mycurser.execute(create_branches_table)
-mydb.commit()
-mycurser.executemany(act_insert_branches, branch_info)
-mydb.commit()
-print("Done creating tables")
-# data = mycurser.fetchall()
-# df = pd.read_sql_query(sql, mydb)
-# df1 = pd.DataFrame(df)
-# print(df)
+# CONNECTS TO LOCAL DATABASE
+def connect():
+    mydb = mysql.connector.connect( host=host,
+                                    user=user,
+                                    password=password,
+                                    port=port,
+                                    database=database)
+    return mydb.cursor(), mydb
 
-mydb.close()
 
-####################### FUNCS
-def generate_data():
-    mycurser.executemany(act_insert_workers, create_employees(1))
+# DISCONNECTS FROM LOCAL DATABASE
+def disconnect(mydb):
+    mydb.close()
 
+
+# CREATES AND FILLS TABLES
+def create_tables(mycurser, mydb):
+
+    # CREATE AND FILL EMPLOYEE TABLE
+    mycurser.execute(create_employees_table)
+    mydb.commit()
+    mycurser.executemany(act_insert_workers, create_employees(500))
+    mydb.commit()
+
+    # CREATE AND FILL BRANCH TABLE
+    mycurser.execute(create_branches_table)
+    mydb.commit()
+    mycurser.executemany(act_insert_branches, branch_info)
+    mydb.commit()
+
+
+
+if __name__ == '__main__':
+    mycurser, mydb = connect()
+    create_tables(mycurser=mycurser, mydb=mydb)
+    disconnect(mydb=mydb)
+    print("Done creating tables")
